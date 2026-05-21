@@ -24,10 +24,10 @@ if st.button("次へ"):
         # st.write("学生番号：", student_id)
         # st.write("専攻：", field)
         # st.write("次の画面からは座標を表示していきます。")
-         st.session_state.student_id = student_id
-            st.session_state.field = field
-            st.session_state.page = "image"
-            st.rerun()
+        st.session_state.student_id = student_id
+        st.session_state.field = field
+        st.session_state.page = "image"
+        st.rerun()
 
 elif st.session_state.page == "image":
     st.write("画像を見て座標に回答してください。")
