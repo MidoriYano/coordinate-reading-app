@@ -1,4 +1,5 @@
 import streamlit as st
+from datetime import datetime
 
 st.title("座標の読み取りに関する評価実験")
 
@@ -17,6 +18,9 @@ if "image_index" not in st.session_state:
 
 if "answers" not in st.session_state:
     st.session_state.answers = []
+
+if "image_start_time" not in st.session_state:
+    st.session_state.image_start_time = None
 
 # -------------------------
 # 最初の画面
@@ -44,6 +48,7 @@ if st.button("次へ"):
         st.session_state.student_id = student_id
         st.session_state.field = field
         st.session_state.page = "image"
+        st.session_state.image_start_time = datetime.now()
         st.rerun()
 
 # -------------------------
@@ -62,13 +67,19 @@ elif st.session_state.page == "image":
 
     if st.button("次の画像へ"):
 
+        button_time = datetime.now()
+
         st.session_state.answers.append({
             "image": index + 1,
             "answer": answer
+            "image_start_time": st.session_state.image_start_time,
+            "button_time": button_time,
+            "display_seconds": (button_time - st.session_state.image_start_time).total_seconds()
         })
         
         if index < len(images) - 1:
             st.session_state.image_index += 1
+            st.session_state.image_start_time = datetime.now()
             st.rerun()
         else:
             st.session_state.page = "end"
@@ -91,5 +102,8 @@ elif st.session_state.page == "end":
 
     for item in st.session_state.answers:
         st.write(f"画像 {item['image']}")
-        st.write(item["answer"])
+        st.write("回答：", item["answer"])
+        st.write("表示開始時刻：", item["image_start_time"])
+        st.write("ボタン押下時刻：", item["button_time"])
+        st.write("表示時間（秒）：", item["display_seconds"])
         st.write("---")
