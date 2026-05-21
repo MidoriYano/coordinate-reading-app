@@ -14,6 +14,13 @@ if "page" not in st.session_state:
 if "image_index" not in st.session_state:
     st.session_state.image_index = 0
 
+if "answers" not in st.session_state:
+    st.session_state.answers = []
+
+# -------------------------
+# 最初の画面
+# -------------------------
+
 if st.session_state.page == "start":
     st.write("Input your informaton!")
 
@@ -38,6 +45,9 @@ if st.button("次へ"):
         st.session_state.page = "image"
         st.rerun()
 
+# -------------------------
+# 画像回答画面
+# -------------------------
 elif st.session_state.page == "image":
     # st.write("画像を見て座標を回答してください。")
     # st.image("https://placehold.co/600x400?text=Sample+Image")
@@ -50,6 +60,12 @@ elif st.session_state.page == "image":
     answer = st.text_area("画像を見て座標を回答してください。")
 
     if st.button("次の画像へ"):
+
+        st.session_state.answers.append({
+            "image": index + 1,
+            "answer": answer
+        })
+        
         if index < len(images) - 1:
             st.session_state.image_index += 1
             st.rerun()
@@ -61,8 +77,18 @@ elif st.session_state.page == "image":
         # st.write("所属：", st.session_state.field)
         # st.write("回答：", answer)
 
+# -------------------------
+# 終了画面
+# -------------------------
 elif st.session_state.page == "end":
     st.success("終了です。ご協力いただきありがとうございました。")
 
     st.write("学生番号：", st.session_state.student_id)
     st.write("所属：", st.session_state.field)
+    
+    st.write("### 回答一覧")
+
+    for item in st.session_state.answers:
+        st.write(f"画像 {item['image']}")
+        st.write(item["answer"])
+        st.write("---")
