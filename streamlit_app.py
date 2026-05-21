@@ -6,8 +6,8 @@ st.write("Input your informaton!")
 student_id = st.text_input("学生番号を入力してください")
 
 field = st.radio(
-    "あなたの所属を選んでください",
-    ["文系", "理系"]
+    "自分の専攻にもとづいて選んでください",
+    ["文系", "理系", "わからない"]
 )
 
 
