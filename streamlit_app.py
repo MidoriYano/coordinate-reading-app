@@ -30,11 +30,11 @@ if st.button("次へ"):
         st.rerun()
 
 elif st.session_state.page == "image":
-    st.write("画像を見て座標に回答してください。")
+    st.write("画像を見て座標を回答してください。")
 
     st.image("https://placehold.co/600x400?text=Sample+Image")
 
-    answer = st.text_area("座標値この画像について気づいたことを書いてください")
+    answer = st.text_area("画像を見て座標を回答してください。")
 
     if st.button("次の画像へ"):
         st.success("次の画像に進む予定です。")
