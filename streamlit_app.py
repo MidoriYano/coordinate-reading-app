@@ -2,6 +2,12 @@ import streamlit as st
 
 st.title("座標の読み取りに関する評価実験")
 
+images = [
+    "https://placehold.co/600x400?text=Image+1",
+    "https://placehold.co/600x400?text=Image+2",
+    "https://placehold.co/600x400?text=Image+3",
+]
+
 if "page" not in st.session_state:
     st.session_state.page = "start"
 
@@ -30,14 +36,30 @@ if st.button("次へ"):
         st.rerun()
 
 elif st.session_state.page == "image":
-    st.write("画像を見て座標を回答してください。")
+    # st.write("画像を見て座標を回答してください。")
+    # st.image("https://placehold.co/600x400?text=Sample+Image")
 
-    st.image("https://placehold.co/600x400?text=Sample+Image")
+    index = st.session_state.image_index
+
+    st.write(f"画像 {index + 1} / {len(images)}")
+    st.image(images[index])
 
     answer = st.text_area("画像を見て座標を回答してください。")
 
     if st.button("次の画像へ"):
-        st.success("次の画像に進む予定です。")
-        st.write("番号：", st.session_state.student_id)
-        st.write("所属：", st.session_state.field)
-        st.write("回答：", answer)
+        if index < len(images) - 1:
+            st.session_state.image_index += 1
+            st.rerun()
+        else:
+            st.session_state.page = "end"
+            st.rerun()
+        # st.success("次の画像に進む予定です。")
+        # st.write("学生番号：", st.session_state.student_id)
+        # st.write("所属：", st.session_state.field)
+        # st.write("回答：", answer)
+
+elif st.session_state.page == "end":
+    st.success("終了です。ご協力いただきありがとうございました。")
+
+    st.write("学生番号：", st.session_state.student_id)
+    st.write("所属：", st.session_state.field)
