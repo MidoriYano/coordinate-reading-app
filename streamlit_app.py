@@ -71,7 +71,7 @@ elif st.session_state.page == "image":
 
         st.session_state.answers.append({
             "image": index + 1,
-            "answer": answer
+            "answer": answer,
             "image_start_time": st.session_state.image_start_time,
             "button_time": button_time,
             "display_seconds": (button_time - st.session_state.image_start_time).total_seconds()
