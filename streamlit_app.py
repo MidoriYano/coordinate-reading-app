@@ -11,6 +11,9 @@ images = [
 if "page" not in st.session_state:
     st.session_state.page = "start"
 
+if "image_index" not in st.session_state:
+    st.session_state.image_index = 0
+
 if st.session_state.page == "start":
     st.write("Input your informaton!")
 
