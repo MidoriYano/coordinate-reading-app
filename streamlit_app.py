@@ -5,7 +5,8 @@ st.title("座標の読み取りに関する評価実験")
 images = [
     "https://placehold.co/600x400?text=Image+1",
     "https://placehold.co/600x400?text=Image+2",
-    "https://placehold.co/600x400?text=Image+3",
+    "images/solid05.pdf"
+    # "https://placehold.co/600x400?text=Image+3",
 ]
 
 if "page" not in st.session_state:
