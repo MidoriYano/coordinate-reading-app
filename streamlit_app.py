@@ -5,7 +5,7 @@ st.title("座標の読み取りに関する評価実験")
 images = [
     "https://placehold.co/600x400?text=Image+1",
     "https://placehold.co/600x400?text=Image+2",
-    "images/solid05.pdf",
+    "images/image3.png",
     # "https://placehold.co/600x400?text=Image+3",
 ]
 
