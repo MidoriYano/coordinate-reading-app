@@ -1,5 +1,7 @@
 import streamlit as st
 from datetime import datetime
+import csv
+import os
 
 st.title("座標の読み取りに関する評価実験")
 
@@ -9,6 +11,8 @@ images = [
     "images/image3.png",
     # "https://placehold.co/600x400?text=Image+3",
 ]
+
+csv_file = "answer.csv"
 
 if "page" not in st.session_state:
     st.session_state.page = "start"
@@ -21,6 +25,41 @@ if "answers" not in st.session_state:
 
 if "image_start_time" not in st.session_state:
     st.session_state.image_start_time = None
+
+# -------------------------
+# 回答保存
+# -------------------------
+
+def save_to_csv():
+    file_exists = os.path.exists(csv_file)
+
+    with open(csv_file, "a", newline="", encoding="utf-8-sig") as f:
+        writer = csv.writer(f)
+
+        if not file_exists:
+            writer.writerow([
+                "学生番号",
+                "文理選択",
+                "画像番号",
+                "回答",
+                "表示開始時刻",
+                "ボタン押下時刻",
+                "表示時間_秒"
+            ])
+
+        for item in st.session_state.answers:
+            writer.writerow([
+                st.session_state.student_id,
+                st.session_state.field,
+                item["image"],
+                item["answer"],
+                item["image_start_time"],
+                item["button_time"],
+                item["display_seconds"]
+            ])
+
+
+
 
 # -------------------------
 # 最初の画面
@@ -43,7 +82,7 @@ if st.button("次へ"):
     else:
         # st.success("入力が完了しました。")
         # st.write("学生番号：", student_id)
-        # st.write("専攻：", field)
+        # st.write("文理選択：", field)
         # st.write("次の画面からは座標を表示していきます。")
         st.session_state.student_id = student_id
         st.session_state.field = field
@@ -94,16 +133,17 @@ elif st.session_state.page == "image":
 # -------------------------
 elif st.session_state.page == "end":
     st.success("終了です。ご協力いただきありがとうございました。")
+    st.write("回答はCSVに保存されました。")
 
     st.write("学生番号：", st.session_state.student_id)
-    st.write("所属：", st.session_state.field)
+    st.write("文理選択：", st.session_state.field)
     
     st.write("### 回答一覧")
 
     for item in st.session_state.answers:
         st.write(f"画像 {item['image']}")
         st.write("回答：", item["answer"])
-        st.write("表示開始時刻：", item["image_start_time"])
-        st.write("ボタン押下時刻：", item["button_time"])
+        # st.write("表示開始時刻：", item["image_start_time"])
+        # st.write("ボタン押下時刻：", item["button_time"])
         st.write("表示時間（秒）：", item["display_seconds"])
         st.write("---")
