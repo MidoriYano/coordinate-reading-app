@@ -185,7 +185,8 @@ elif st.session_state.page == "image":
             "display_seconds": (button_time - st.session_state.image_start_time).total_seconds()
         })
         
-        if index < len(images) - 1:
+        # if index < len(images) - 1:
+        if index < len(st.session_state.trials) - 1:
             st.session_state.image_index += 1
             st.session_state.image_start_time = datetime.now()
             st.session_state.submitted = False
