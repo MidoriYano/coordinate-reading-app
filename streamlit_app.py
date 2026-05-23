@@ -140,7 +140,11 @@ elif st.session_state.page == "image":
     st.write(f"画像 {index + 1} / {len(images)}")
     st.image(images[index])
 
-    answer = st.text_area("画像を見て座標を回答してください。")
+    # answer = st.text_area("画像を見て座標を回答してください。")
+    answer = st.text_area(
+    "画像を見て座標を回答してください。",
+    key=f"answer_{index}"
+    )
 
     # if st.button("次の画像へ"):
     if st.button("次の画像へ", disabled=st.session_state.submitted):
