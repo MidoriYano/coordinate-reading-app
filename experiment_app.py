@@ -91,11 +91,28 @@ if "submitted" not in st.session_state:
 
 def save_to_google_sheets():
     for item in st.session_state.answers:
+        # sheet.append_row([
+        #     st.session_state.student_id,
+        #     st.session_state.field,
+        #     item["image"],
+        #     item["answer"],
+        #     str(item["image_start_time"]),
+        #     str(item["button_time"]),
+        #     item["display_seconds"]
+        # ])
         sheet.append_row([
-            st.session_state.student_id,
-            st.session_state.field,
-            item["image"],
-            item["answer"],
+            datetime.now().isoformat(),
+            item["participant_id"],
+            item["assigned_group"],
+            item["trial_order"],
+            item["series_id"],
+            item["condition"],
+            item["task"],
+            item["image_file"],
+            item["true_answer"],
+            item["response"],
+            item["correct"],
+            item["abs_error"],
             str(item["image_start_time"]),
             str(item["button_time"]),
             item["display_seconds"]
@@ -177,12 +194,44 @@ elif st.session_state.page == "image":
             
         button_time = datetime.now()
 
+        # st.session_state.answers.append({
+        #     "image": index + 1,
+        #     "answer": answer,
+        #     "image_start_time": st.session_state.image_start_time,
+        #     "button_time": button_time,
+        #     "display_seconds": (button_time - st.session_state.image_start_time).total_seconds()
+        # })
+
+        true_answer = trial["true_answer"]
+        
+        try:
+            response_num = float(answer)
+            true_num = float(true_answer)
+            
+            abs_error = abs(response_num - true_num)
+            correct = int(response_num == true_num)
+            
+        except:
+            abs_error = ""
+            correct = ""
+
         st.session_state.answers.append({
-            "image": index + 1,
-            "answer": answer,
+            "participant_id": st.session_state.student_id,
+            "assigned_group": st.session_state.assigned_group,
+            "trial_order": trial["trial_order"],
+            "series_id": trial["series_id"],
+            "condition": trial["condition"],
+            "task": trial["task"],
+            "image_file": trial["image_file"],
+            "true_answer": trial["true_answer"],
+            "response": answer,
+            "correct": correct,
+            "abs_error": abs_error,
             "image_start_time": st.session_state.image_start_time,
             "button_time": button_time,
-            "display_seconds": (button_time - st.session_state.image_start_time).total_seconds()
+            "display_seconds": (
+                button_time - st.session_state.image_start_time
+            ).total_seconds()
         })
         
         # if index < len(images) - 1:
