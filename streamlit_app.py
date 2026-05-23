@@ -51,6 +51,9 @@ if "answers" not in st.session_state:
 if "image_start_time" not in st.session_state:
     st.session_state.image_start_time = None
 
+if "submitted" not in st.session_state:
+    st.session_state.submitted = False
+
 # -------------------------
 # 回答保存
 # -------------------------
@@ -139,8 +142,17 @@ elif st.session_state.page == "image":
 
     answer = st.text_area("画像を見て座標を回答してください。")
 
-    if st.button("次の画像へ"):
+    # if st.button("次の画像へ"):
+    if st.button("次の画像へ", disabled=st.session_state.submitted):
 
+        # 回答空欄チェック
+        if answer.strip() == "":
+            st.warning("回答を入力してください。")
+            st.stop()
+
+        # 二重送信防止
+        st.session_state.submitted = True
+            
         button_time = datetime.now()
 
         st.session_state.answers.append({
@@ -154,10 +166,12 @@ elif st.session_state.page == "image":
         if index < len(images) - 1:
             st.session_state.image_index += 1
             st.session_state.image_start_time = datetime.now()
+            st.session_state.submitted = False
             st.rerun()
         else:
             save_to_google_sheets()
             st.session_state.page = "end"
+            st.session_state.submitted = False
             st.rerun()
         # st.success("次の画像に進む予定です。")
         # st.write("学生番号：", st.session_state.student_id)
