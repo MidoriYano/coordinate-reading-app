@@ -103,27 +103,27 @@ def save_to_google_sheets():
 if st.session_state.page == "start":
     st.write("Input your informaton!")
 
-student_id = st.text_input("学生番号を入力してください")
+    student_id = st.text_input("学生番号を入力してください")
 
-field = st.radio(
-    "自分の専攻にもとづいて選択してください",
-    ["文系", "理系", "わからない"]
-)
+    field = st.radio(
+        "自分の専攻にもとづいて選択してください",
+        ["文系", "理系", "わからない"]
+    )
 
 
-if st.button("次へ"):
-    if student_id == "":
-        st.warning("学生番号を入力してください。")
-    else:
-        # st.success("入力が完了しました。")
-        # st.write("学生番号：", student_id)
-        # st.write("文理選択：", field)
-        # st.write("次の画面からは座標を表示していきます。")
-        st.session_state.student_id = student_id
-        st.session_state.field = field
-        st.session_state.page = "image"
-        st.session_state.image_start_time = datetime.now()
-        st.rerun()
+    if st.button("次へ"):
+        if student_id == "":
+            st.warning("学生番号を入力してください。")
+        else:
+            # st.success("入力が完了しました。")
+            # st.write("学生番号：", student_id)
+            # st.write("文理選択：", field)
+            # st.write("次の画面からは座標を表示していきます。")
+            st.session_state.student_id = student_id
+            st.session_state.field = field
+            st.session_state.page = "image"
+            st.session_state.image_start_time = datetime.now()
+            st.rerun()
 
 # -------------------------
 # 画像回答画面
@@ -156,6 +156,7 @@ elif st.session_state.page == "image":
             st.session_state.image_start_time = datetime.now()
             st.rerun()
         else:
+            save_to_google_sheets()
             st.session_state.page = "end"
             st.rerun()
         # st.success("次の画像に進む予定です。")
