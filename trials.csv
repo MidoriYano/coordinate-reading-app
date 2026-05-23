@@ -1,7 +1,7 @@
 group,trial_order,series_id,condition,task,image_file,true_answer
 A,1,s01,orthogonal,value,images/ex/s01_orthogonal.png,7
-A,2,s02,sheared,value,images/ex/s02_sheared.png,5
-B,1,s01,sheared,value,images/ex/s01_sheared.png,7
+A,2,s02,sheared,value,images/ex/s02_sheared30.png,5
+B,1,s01,sheared,value,images/ex/s01_sheared30.png,7
 B,2,s02,no_grid,value,images/ex/s02_no_grid.png,5
 C,1,s01,no_grid,value,images/ex/s01_no_grid.png,7
 C,2,s02,orthogonal,value,images/ex/s02_orthogonal.png,5
