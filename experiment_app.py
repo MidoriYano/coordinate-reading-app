@@ -264,9 +264,17 @@ elif st.session_state.page == "end":
     st.write("### 回答一覧")
 
     for item in st.session_state.answers:
-        st.write(f"画像 {item['image']}")
-        st.write("回答：", item["answer"])
-        # st.write("表示開始時刻：", item["image_start_time"])
-        # st.write("ボタン押下時刻：", item["button_time"])
+        # st.write(f"画像 {item['image']}")
+        # st.write("回答：", item["answer"])
+        # # st.write("表示開始時刻：", item["image_start_time"])
+        # # st.write("ボタン押下時刻：", item["button_time"])
+        # st.write("表示時間（秒）：", item["display_seconds"])
+        # st.write("---")
+        st.write(f"試行 {item['trial_order']}")
+        st.write("系列ID：", item["series_id"])
+        st.write("条件：", item["condition"])
+        st.write("回答：", item["response"])
         st.write("表示時間（秒）：", item["display_seconds"])
         st.write("---")
+
+
