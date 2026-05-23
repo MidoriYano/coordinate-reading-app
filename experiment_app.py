@@ -151,8 +151,12 @@ elif st.session_state.page == "image":
 
     index = st.session_state.image_index
 
-    st.write(f"画像 {index + 1} / {len(images)}")
-    st.image(images[index])
+    # st.write(f"画像 {index + 1} / {len(images)}")
+    # st.image(images[index])
+
+    trial = st.session_state.trials[index]
+    st.write(f"画像 {index + 1} / {len(st.session_state.trials)}")
+    st.image(trial["image_file"])
 
     # answer = st.text_area("画像を見て座標を回答してください。")
     answer = st.text_area(
