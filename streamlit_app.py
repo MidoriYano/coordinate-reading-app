@@ -1,7 +1,9 @@
 import streamlit as st
 from datetime import datetime
-import csv
-import os
+# import csv
+# import os
+import gspread
+from google.oauth2.service_account import Credentials
 
 st.title("座標の読み取りに関する評価実験")
 
@@ -12,7 +14,27 @@ images = [
     # "https://placehold.co/600x400?text=Image+3",
 ]
 
-csv_file = "answer.csv"
+# csv_file = "answer.csv"
+
+# -------------------------
+# Gスプレッドシート書き込み準備
+# -------------------------
+scope = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+
+credentials = Credentials.from_service_account_info(
+    st.secrets,
+    scopes=scope
+)
+
+client = gspread.authorize(credentials)
+sheet = client.open(st.secrets["spreadsheet_name"]).sheet1
+
+# -------------------------
+# 初期設定
+# -------------------------
 
 if "page" not in st.session_state:
     st.session_state.page = "start"
@@ -30,35 +52,45 @@ if "image_start_time" not in st.session_state:
 # 回答保存
 # -------------------------
 
-def save_to_csv():
-    file_exists = os.path.exists(csv_file)
+# def save_to_csv():
+#     file_exists = os.path.exists(csv_file)
 
-    with open(csv_file, "a", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
+#     with open(csv_file, "a", newline="", encoding="utf-8-sig") as f:
+#         writer = csv.writer(f)
 
-        if not file_exists:
-            writer.writerow([
-                "学生番号",
-                "文理選択",
-                "画像番号",
-                "回答",
-                "表示開始時刻",
-                "ボタン押下時刻",
-                "表示時間_秒"
-            ])
+#         if not file_exists:
+#             writer.writerow([
+#                 "学生番号",
+#                 "文理選択",
+#                 "画像番号",
+#                 "回答",
+#                 "表示開始時刻",
+#                 "ボタン押下時刻",
+#                 "表示時間_秒"
+#             ])
 
-        for item in st.session_state.answers:
-            writer.writerow([
-                st.session_state.student_id,
-                st.session_state.field,
-                item["image"],
-                item["answer"],
-                item["image_start_time"],
-                item["button_time"],
-                item["display_seconds"]
-            ])
+#         for item in st.session_state.answers:
+#             writer.writerow([
+#                 st.session_state.student_id,
+#                 st.session_state.field,
+#                 item["image"],
+#                 item["answer"],
+#                 item["image_start_time"],
+#                 item["button_time"],
+#                 item["display_seconds"]
+#             ])
 
-
+def save_to_google_sheets():
+    for item in st.session_state.answers:
+        sheet.append_row([
+            st.session_state.student_id,
+            st.session_state.field,
+            item["image"],
+            item["answer"],
+            str(item["image_start_time"]),
+            str(item["button_time"]),
+            item["display_seconds"]
+        ])
 
 
 # -------------------------
@@ -133,7 +165,8 @@ elif st.session_state.page == "image":
 # -------------------------
 elif st.session_state.page == "end":
     st.success("終了です。ご協力いただきありがとうございました。")
-    st.write("回答はCSVに保存されました。")
+    # st.write("回答はCSVに保存されました。")
+    st.write("回答はGoogleスプレッドシートに保存されました。")
 
     st.write("学生番号：", st.session_state.student_id)
     st.write("文理選択：", st.session_state.field)
