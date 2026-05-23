@@ -8,12 +8,14 @@ from google.oauth2.service_account import Credentials
 
 st.title("座標の読み取りに関する評価実験")
 
-images = [
-    "https://placehold.co/600x400?text=Image+1",
-    "https://placehold.co/600x400?text=Image+2",
-    "images/image3.png",
-    # "https://placehold.co/600x400?text=Image+3",
-]
+# images = [
+#     "https://placehold.co/600x400?text=Image+1",
+#     "https://placehold.co/600x400?text=Image+2",
+#     "images/image3.png",
+#     # "https://placehold.co/600x400?text=Image+3",
+# ]
+
+trials_all = pd.read_csv("trials.csv")
 
 # csv_file = "answer.csv"
 
@@ -114,6 +116,11 @@ if st.session_state.page == "start":
         ["文系", "理系", "わからない"]
     )
 
+    assigned_group = st.radio(
+    "事前に指定されたグループを選択してください",
+    ["A", "B", "C"]
+    )
+
 
     if st.button("次へ"):
         if student_id == "":
@@ -125,6 +132,12 @@ if st.session_state.page == "start":
             # st.write("次の画面からは座標を表示していきます。")
             st.session_state.student_id = student_id
             st.session_state.field = field
+            st.session_state.assigned_group = assigned_group
+
+            # グループ別に表示される画像群を指定
+            trials = trials_all[trials_all["group"] == assigned_group].sort_values("trial_order")
+            st.session_state.trials = trials.to_dict("records")
+
             st.session_state.page = "image"
             st.session_state.image_start_time = datetime.now()
             st.rerun()
