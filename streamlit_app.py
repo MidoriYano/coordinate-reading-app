@@ -30,7 +30,10 @@ credentials = Credentials.from_service_account_info(
 )
 
 client = gspread.authorize(credentials)
-sheet = client.open(st.secrets["spreadsheet_name"]).sheet1
+# sheet = client.open(st.secrets["spreadsheet_name"]).sheet1
+sheet = client.open_by_key(
+    st.secrets["spreadsheet_id"]
+).sheet1
 
 # -------------------------
 # 初期設定
