@@ -25,30 +25,14 @@ trials_all = pd.read_csv("trials.csv", dtype={"true_answer": str})
 missing_columns = [col for col in REQUIRED_COLUMNS if col not in trials_all.columns]
 
 if missing_columns:
-    st.error(f"trials.csv に必要な列がありません: {missing_columns}")
+    st.error(f"trials.csvに必要な列がありません: {missing_columns}")
     st.stop()
 
 
 # -------------------------
 # Gスプレッドシート書き込み準備
 # -------------------------
-# scope = [
-#     "https://www.googleapis.com/auth/spreadsheets",
-#     "https://www.googleapis.com/auth/drive"
-# ]
-
-# credentials = Credentials.from_service_account_info(
-#     st.secrets,
-#     scopes=scope
-# )
-
-# client = gspread.authorize(credentials)
-
-# sheet = client.open_by_key(
-#     st.secrets["spreadsheet_id"]
-# ).sheet1
-
-@st.cache_resource
+@st.cache_resource（複数人同時接続対応）
 def connect_to_sheet():
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -64,6 +48,24 @@ def connect_to_sheet():
     return client.open_by_key(st.secrets["spreadsheet_id"]).sheet1
 
 sheet = connect_to_sheet()
+
+# -------------------------
+# 設問設定
+# -------------------------
+# 問題文
+QUESTION_TEXT = {
+    "value_reading": "x = 7 のときの y の値を整数で入力してください。",
+    "change_estimation": "グラフの前半から後半にかけて、y の変化量はいくつに見えますか。整数で入力してください。",
+    "peak_detection": "y の値が最も高い点の x の値を整数で入力してください。",
+    "slope_judgment": "前半と後半では、どちらの変化が急に見えますか。",
+}
+
+# 回答形式
+SLOPE_OPTIONS = {
+    "前半": "earlier",
+    "後半": "later",
+    "同じ": "same",
+}
 
 # -------------------------
 # 初期設定
