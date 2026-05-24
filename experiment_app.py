@@ -276,7 +276,7 @@ elif st.session_state.page == "image":
             "task": trial["task"],
             "image_file": trial["image_file"],
             "true_answer": trial["true_answer"],
-            "response": answer,
+            "response": response,
             "correct": correct,
             "abs_error": abs_error,
             "image_start_time": st.session_state.image_start_time,
