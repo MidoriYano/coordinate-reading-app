@@ -11,21 +11,38 @@ trials_all = pd.read_csv("trials.csv")
 # -------------------------
 # Gスプレッドシート書き込み準備
 # -------------------------
-scope = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
-]
+# scope = [
+#     "https://www.googleapis.com/auth/spreadsheets",
+#     "https://www.googleapis.com/auth/drive"
+# ]
 
-credentials = Credentials.from_service_account_info(
-    st.secrets,
-    scopes=scope
-)
+# credentials = Credentials.from_service_account_info(
+#     st.secrets,
+#     scopes=scope
+# )
 
-client = gspread.authorize(credentials)
+# client = gspread.authorize(credentials)
 
-sheet = client.open_by_key(
-    st.secrets["spreadsheet_id"]
-).sheet1
+# sheet = client.open_by_key(
+#     st.secrets["spreadsheet_id"]
+# ).sheet1
+
+@st.cache_resource
+def connect_to_sheet():
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+
+    credentials = Credentials.from_service_account_info(
+        st.secrets,
+        scopes=scope
+    )
+
+    client = gspread.authorize(credentials)
+    return client.open_by_key(st.secrets["spreadsheet_id"]).sheet1
+
+sheet = connect_to_sheet()
 
 # -------------------------
 # 初期設定
@@ -51,19 +68,35 @@ if "submitted" not in st.session_state:
 # -------------------------
 
 def save_to_google_sheets():
+    # for item in st.session_state.answers:
+    #     sheet.append_row([
+    #         datetime.now().isoformat(),
+    #         item["participant_id"],
+    #         item["assigned_group"],
+    #         item["trial_order"],
+    #         item["series_id"],
+    #         item["condition"],
+    #         item["task"],
+    #         item["image_file"],
+    #         item["true_answer"],
+    #         item["response"],
+    #         item["correct"],
+    #         item["abs_error"],
+    #         str(item["image_start_time"]),
+    #         str(item["button_time"]),
+    #         item["display_seconds"]
+    #     ])
+    if st.session_state.saved_to_sheet:
+        return
+
+    rows = []
+    saved_at = datetime.now().isoformat()
+
     for item in st.session_state.answers:
-        # sheet.append_row([
-        #     st.session_state.student_id,
-        #     st.session_state.field,
-        #     item["image"],
-        #     item["answer"],
-        #     str(item["image_start_time"]),
-        #     str(item["button_time"]),
-        #     item["display_seconds"]
-        # ])
-        sheet.append_row([
-            datetime.now().isoformat(),
+        rows.append([
+            saved_at,
             item["participant_id"],
+            item["field"],
             item["assigned_group"],
             item["trial_order"],
             item["series_id"],
@@ -71,14 +104,18 @@ def save_to_google_sheets():
             item["task"],
             item["image_file"],
             item["true_answer"],
+            item["response_label"],
             item["response"],
             item["correct"],
             item["abs_error"],
             str(item["image_start_time"]),
             str(item["button_time"]),
-            item["display_seconds"]
+            item["display_seconds"],
         ])
 
+    if rows:
+        sheet.append_rows(rows, value_input_option="USER_ENTERED")
+        st.session_state.saved_to_sheet = True
 
 # -------------------------
 # 最初の画面
