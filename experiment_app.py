@@ -11,22 +11,22 @@ trials_all = pd.read_csv("trials.csv")
 # -------------------------
 # trials.csv 読み込み
 # -------------------------
-# REQUIRED_COLUMNS = [
-#     "group",
-#     "trial_order",
-#     "series_id",
-#     "condition",
-#     "task",
-#     "image_file",
-#     "true_answer",
-# ]
+REQUIRED_COLUMNS = [
+    "group",
+    "trial_order",
+    "series_id",
+    "condition",
+    "task",
+    "image_file",
+    "true_answer",
+]
 
-# trials_all = pd.read_csv("trials.csv", dtype={"true_answer": str})
-# missing_columns = [col for col in REQUIRED_COLUMNS if col not in trials_all.columns]
+trials_all = pd.read_csv("trials.csv", dtype={"true_answer": str})
+missing_columns = [col for col in REQUIRED_COLUMNS if col not in trials_all.columns]
 
-# if missing_columns:
-#     st.error(f"trials.csvに必要な列がありません: {missing_columns}")
-#     st.stop()
+if missing_columns:
+    st.error(f"trials.csvに必要な列がありません: {missing_columns}")
+    st.stop()
 
 
 # -------------------------
@@ -90,28 +90,33 @@ if "saved_to_sheet" not in st.session_state:
     st.session_state.saved_to_sheet = False
 
 # -------------------------
+# 正誤・誤差の算出
+# -------------------------
+def judge_answer(task, response, true_answer):
+    response = str(response).strip()
+    true_answer = str(true_answer).strip()
+
+    if task == "slope_judgment":
+        correct = int(response == true_answer)
+        return correct, ""
+
+    try:
+        response_num = float(response)
+        true_num = float(true_answer)
+        abs_error = abs(response_num - true_num)
+        correct = int(response_num == true_num)
+        return correct, abs_error
+    except ValueError:
+        return "", ""
+
+
+
+
+
+# -------------------------
 # 回答保存
 # -------------------------
-
 def save_to_google_sheets():
-    # for item in st.session_state.answers:
-    #     sheet.append_row([
-    #         datetime.now().isoformat(),
-    #         item["participant_id"],
-    #         item["assigned_group"],
-    #         item["trial_order"],
-    #         item["series_id"],
-    #         item["condition"],
-    #         item["task"],
-    #         item["image_file"],
-    #         item["true_answer"],
-    #         item["response"],
-    #         item["correct"],
-    #         item["abs_error"],
-    #         str(item["image_start_time"]),
-    #         str(item["button_time"]),
-    #         item["display_seconds"]
-    #     ])
     if st.session_state.saved_to_sheet:
         return
 
@@ -159,20 +164,45 @@ if st.session_state.page == "start":
 
 
     if st.button("次へ"):
-        if student_id == "":
+        # if student_id == "":
+        #     st.warning("学生番号を入力してください。")
+        # else:
+        #     st.session_state.student_id = student_id
+        #     st.session_state.field = field
+        #     st.session_state.assigned_group = assigned_group
+
+        #     # グループ別に表示される画像群を指定
+        #     trials = trials_all[trials_all["group"] == assigned_group].sort_values("trial_order")
+        #     st.session_state.trials = trials.to_dict("records")
+
+        #     st.session_state.page = "image"
+        #     st.session_state.image_start_time = datetime.now()
+        #     st.rerun()
+
+        if student_id.strip() == "":
             st.warning("学生番号を入力してください。")
-        else:
-            st.session_state.student_id = student_id
-            st.session_state.field = field
-            st.session_state.assigned_group = assigned_group
+            st.stop()
 
-            # グループ別に表示される画像群を指定
-            trials = trials_all[trials_all["group"] == assigned_group].sort_values("trial_order")
-            st.session_state.trials = trials.to_dict("records")
+        trials = (
+            trials_all[trials_all["group"] == assigned_group]
+            .sort_values("trial_order")
+            .to_dict("records")
+        )
 
-            st.session_state.page = "image"
-            st.session_state.image_start_time = datetime.now()
-            st.rerun()
+        if len(trials) == 0:
+            st.error(f"グループ {assigned_group} の試行が trials.csv にありません。")
+            st.stop()
+
+        st.session_state.student_id = student_id.strip()
+        st.session_state.field = field
+        st.session_state.assigned_group = assigned_group
+        st.session_state.trials = trials
+        st.session_state.image_index = 0
+        st.session_state.answers = []
+        st.session_state.saved_to_sheet = False
+        st.session_state.page = "image"
+        st.session_state.image_start_time = datetime.now()
+        st.rerun()
 
 # -------------------------
 # 画像回答画面
@@ -184,12 +214,32 @@ elif st.session_state.page == "image":
     st.write(f"画像 {index + 1} / {len(st.session_state.trials)}")
     st.image(trial["image_file"])
 
-    answer = st.text_area("画像を見て座標を回答してください。", key=f"answer_{index}")
+    # answer = st.text_area("画像を見て座標を回答してください。", key=f"answer_{index}")
+
+    task = trial["task"]
+    question = QUESTION_TEXT.get(task, "画像を見て回答してください。")
+    st.write(f"**問題：{question}**")
+
+    if task == "slope_judgment":
+        response_label = st.radio(
+            "回答を選択してください。",
+            ["前半", "後半", "前半も後半も変わらない"],
+            index=None,
+            key=f"answer_{index}",
+        )
+        response = SLOPE_OPTIONS.get(response_label, "") if response_label else ""
+    else:
+        response_label = st.text_input(
+            "回答を整数で入力してください。",
+            key=f"answer_{index}",
+        )
+        response = response_label.strip()
 
     if st.button("次の画像へ", disabled=st.session_state.submitted):
 
         # 回答空欄チェック
-        if answer.strip() == "":
+        # if answer.strip() == "":
+        if response == "":
             st.warning("回答を入力してください。")
             st.stop()
 
@@ -200,16 +250,22 @@ elif st.session_state.page == "image":
 
         true_answer = trial["true_answer"]
         
-        try:
-            response_num = float(answer)
-            true_num = float(true_answer)
+        # try:
+        #     response_num = float(answer)
+        #     true_num = float(true_answer)
             
-            abs_error = abs(response_num - true_num)
-            correct = int(response_num == true_num)
+        #     abs_error = abs(response_num - true_num)
+        #     correct = int(response_num == true_num)
             
-        except:
-            abs_error = ""
-            correct = ""
+        # except:
+        #     abs_error = ""
+        #     correct = ""
+
+        correct, abs_error = judge_answer(
+            task=task,
+            response=response,
+            true_answer=trial["true_answer"],
+        )
 
         st.session_state.answers.append({
             "participant_id": st.session_state.student_id,
@@ -250,6 +306,7 @@ elif st.session_state.page == "end":
 
     st.write("学生番号：", st.session_state.student_id)
     st.write("文理選択：", st.session_state.field)
+    st.write("グループ：", st.session_state.assigned_group)
     
     st.write("### 回答一覧")
 
