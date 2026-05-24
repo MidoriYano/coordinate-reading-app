@@ -32,7 +32,7 @@ if missing_columns:
 # -------------------------
 # Gスプレッドシート書き込み準備
 # -------------------------
-@st.cache_resource（複数人同時接続対応）
+@st.cache_resource #複数人同時接続対応
 def connect_to_sheet():
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
