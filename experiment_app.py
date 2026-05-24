@@ -63,6 +63,9 @@ if "image_start_time" not in st.session_state:
 if "submitted" not in st.session_state:
     st.session_state.submitted = False
 
+if "saved_to_sheet" not in st.session_state:
+    st.session_state.saved_to_sheet = False
+
 # -------------------------
 # 回答保存
 # -------------------------
@@ -90,13 +93,10 @@ def save_to_google_sheets():
         return
 
     rows = []
-    saved_at = datetime.now().isoformat()
-
     for item in st.session_state.answers:
         rows.append([
-            saved_at,
+            datetime.now().isoformat(),
             item["participant_id"],
-            item["field"],
             item["assigned_group"],
             item["trial_order"],
             item["series_id"],
@@ -104,19 +104,17 @@ def save_to_google_sheets():
             item["task"],
             item["image_file"],
             item["true_answer"],
-            item["response_label"],
             item["response"],
             item["correct"],
             item["abs_error"],
             str(item["image_start_time"]),
             str(item["button_time"]),
-            item["display_seconds"],
+            item["display_seconds"]
         ])
-
-    if rows:
-        sheet.append_rows(rows, value_input_option="USER_ENTERED")
-        st.session_state.saved_to_sheet = True
-
+        
+    sheet.append_rows(rows)
+    st.session_state.saved_to_sheet = True
+    
 # -------------------------
 # 最初の画面
 # -------------------------
