@@ -6,7 +6,28 @@ from google.oauth2.service_account import Credentials
 
 st.title("座標の読み取りに関する評価実験")
 
-trials_all = pd.read_csv("trials.csv")
+# trials_all = pd.read_csv("trials.csv")
+
+# -------------------------
+# trials.csv 読み込み
+# -------------------------
+REQUIRED_COLUMNS = [
+    "group",
+    "trial_order",
+    "series_id",
+    "condition",
+    "task",
+    "image_file",
+    "true_answer",
+]
+
+trials_all = pd.read_csv("trials.csv", dtype={"true_answer": str})
+missing_columns = [col for col in REQUIRED_COLUMNS if col not in trials_all.columns]
+
+if missing_columns:
+    st.error(f"trials.csv に必要な列がありません: {missing_columns}")
+    st.stop()
+
 
 # -------------------------
 # Gスプレッドシート書き込み準備
