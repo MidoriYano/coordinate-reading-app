@@ -54,17 +54,17 @@ sheet = connect_to_sheet()
 # -------------------------
 # 問題文
 QUESTION_TEXT = {
-    "value_reading": "x = 7 のときの y の値を整数で入力してください。",
+    "value_reading": "x=7のときのyの値を整数で入力してください。",
     "change_estimation": "グラフの前半から後半にかけて、y の変化量はいくつに見えますか。整数で入力してください。",
-    "peak_detection": "y の値が最も高い点の x の値を整数で入力してください。",
-    "slope_judgment": "前半と後半では、どちらの変化が急に見えますか。",
+    "peak_detection": "yの値が最も高いときのxの値を整数で入力してください。",
+    "slope_judgment": "前半と後半ではどちらのほうが変化が急に見えますか。",
 }
 
 # 回答形式
 SLOPE_OPTIONS = {
     "前半": "earlier",
     "後半": "later",
-    "同じ": "same",
+    "前半も後半も変わらない": "same",
 }
 
 # -------------------------
