@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
@@ -90,6 +91,12 @@ if "saved_to_sheet" not in st.session_state:
     st.session_state.saved_to_sheet = False
 
 # -------------------------
+# JST時刻の算出
+# -------------------------
+def now_jst():
+    return datetime.now(ZoneInfo("Asia/Tokyo"))
+    
+# -------------------------
 # 正誤・誤差の算出
 # -------------------------
 def judge_answer(task, response, true_answer):
@@ -123,7 +130,8 @@ def save_to_google_sheets():
     rows = []
     for item in st.session_state.answers:
         rows.append([
-            datetime.now().isoformat(),
+            # datetime.now().isoformat(),
+            now_jst().isoformat),
             item["participant_id"],
             item["assigned_group"],
             item["trial_order"],
@@ -201,7 +209,8 @@ if st.session_state.page == "start":
         st.session_state.answers = []
         st.session_state.saved_to_sheet = False
         st.session_state.page = "image"
-        st.session_state.image_start_time = datetime.now()
+        # st.session_state.image_start_time = datetime.now()
+        st.session_state.image_start_time = now_jst()
         st.rerun()
 
 # -------------------------
@@ -246,7 +255,8 @@ elif st.session_state.page == "image":
         # 二重送信防止
         st.session_state.submitted = True
             
-        button_time = datetime.now()
+        # button_time = datetime.now()
+        button_time = now_jst()
 
         true_answer = trial["true_answer"]
         
@@ -288,7 +298,8 @@ elif st.session_state.page == "image":
         
         if index < len(st.session_state.trials) - 1:
             st.session_state.image_index += 1
-            st.session_state.image_start_time = datetime.now()
+            # st.session_state.image_start_time = datetime.now()
+            st.session_state.image_start_time = now_jst()
             st.session_state.submitted = False
             st.rerun()
         else:
