@@ -131,7 +131,7 @@ def save_to_google_sheets():
     for item in st.session_state.answers:
         rows.append([
             # datetime.now().isoformat(),
-            now_jst().isoformat),
+            now_jst().isoformat(),
             item["participant_id"],
             item["assigned_group"],
             item["trial_order"],
