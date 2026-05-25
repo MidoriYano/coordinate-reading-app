@@ -150,7 +150,7 @@ def save_to_google_sheets():
 if st.session_state.page == "start":
     st.write("Input your informaton!")
 
-    student_id = st.text_input("学生番号を入力してください")
+    student_id = st.text_input("番号を入力してください")
 
     field = st.radio(
         "自分の専攻にもとづいて選択してください",
@@ -165,7 +165,7 @@ if st.session_state.page == "start":
 
     if st.button("次へ"):
         # if student_id == "":
-        #     st.warning("学生番号を入力してください。")
+        #     st.warning("番号を入力してください。")
         # else:
         #     st.session_state.student_id = student_id
         #     st.session_state.field = field
@@ -180,7 +180,7 @@ if st.session_state.page == "start":
         #     st.rerun()
 
         if student_id.strip() == "":
-            st.warning("学生番号を入力してください。")
+            st.warning("番号を入力してください。")
             st.stop()
 
         trials = (
@@ -304,18 +304,18 @@ elif st.session_state.page == "end":
     st.success("終了です。ご協力いただきありがとうございました。")
     st.write("回答はGoogleスプレッドシートに保存されました。")
 
-    st.write("学生番号：", st.session_state.student_id)
+    st.write("番号：", st.session_state.student_id)
     st.write("文理選択：", st.session_state.field)
     st.write("グループ：", st.session_state.assigned_group)
     
-    st.write("### 回答一覧")
+    # st.write("### 回答一覧")
 
-    for item in st.session_state.answers:
-        st.write(f"試行 {item['trial_order']}")
-        st.write("系列ID：", item["series_id"])
-        st.write("条件：", item["condition"])
-        st.write("回答：", item["response"])
-        st.write("表示時間（秒）：", item["display_seconds"])
-        st.write("---")
+    # for item in st.session_state.answers:
+    #     st.write(f"試行 {item['trial_order']}")
+    #     st.write("系列ID：", item["series_id"])
+    #     st.write("条件：", item["condition"])
+    #     st.write("回答：", item["response"])
+    #     st.write("表示時間（秒）：", item["display_seconds"])
+    #     st.write("---")
 
 
