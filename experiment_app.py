@@ -230,7 +230,7 @@ elif st.session_state.page == "image":
         response = SLOPE_OPTIONS.get(response_label, "") if response_label else ""
     else:
         response_label = st.text_input(
-            "回答を整数で入力してください。",
+            "整数を入力する回答は半角数字でお願いいたします。",
             key=f"answer_{index}",
         )
         response = response_label.strip()
